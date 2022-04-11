@@ -1,0 +1,80 @@
+<div class="container">
+    <div class="background"></div>
+    <div class="container">
+      <div class="row">
+        <app-header></app-header>
+      </div>
+      <div class="row register-panel">
+        <div class="col-md-10 col-md-offset-1">
+          <div class="card">
+            <h2>Register</h2>
+            <div class="row">
+              <div class="col-md-5 col-md-offset-1">
+                <div class="feature">
+                  <div class="icon">
+                    <i class="material-icons" style="color: #e91e63;">timeline</i>
+                  </div>
+                  <div class="desc">
+                    <h4>Tracking</h4>
+                    <p>We've created an interactive and intuitive UI which enables you to track Global Markets on the go.</p>
+                  </div>
+                </div>
+                <div class="feature">
+                  <div class="icon">
+                    <i class="material-icons" style="color: #9c27b0;">code</i>
+                  </div>
+                  <div class="desc">
+                    <h4>Watchlist</h4>
+                    <p>Manage and track all your stock investments at one place.</p>
+                  </div>
+                </div>
+                <div class="feature">
+                  <div class="icon">
+                    <i class="material-icons" style="color: #00bcd4;">group</i>
+                  </div>
+                  <div class="desc">
+                    <h4>Recommendations</h4>
+                    <p>Get AI powered stock recommendations and detailed analysis.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <form [formGroup]="registerForm" (ngSubmit)="registerBtn()">
+                  <mat-error *ngIf="loginInvalid">
+                    All fields are required.
+                  </mat-error>
+                <div class="form-part">
+                  <div class="row">
+                    <i class="material-icons">face</i>
+                    <mat-form-field color="accent">
+                      <input type="text" matInput placeholder="Username" formControlName="name" required>
+                    </mat-form-field>
+                  </div>
+                  <div class="row">
+                    <i class="material-icons">email</i>
+                    <mat-form-field color="accent">
+                      <input type="text" matInput placeholder="Email" formControlName="email" required>
+                    </mat-form-field>
+                  </div>
+                  <div class="row">
+                    <i class="material-icons">lock_outline</i>
+                    <mat-form-field color="accent">
+                      <input type="password" matInput placeholder="Password" formControlName="password" required>
+                    </mat-form-field>
+                  </div>
+                  <div class="row">
+                    <mat-checkbox style="margin-left: 2px"><p style="margin-left: 8px">I agree to the <span style="color: #9c27b0; cursor: pointer; font-weight: 400;">terms and conditions</span>.</p></mat-checkbox>
+                  </div>
+                  <div class="row" style="display: flex; justify-content: center">
+                    <button mat-raised-button class="btn btn-primary btn-round" [ngClass]="{'spinner' : loading}" [disabled]="loading">GET STARTED</button>
+                  </div>
+                </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

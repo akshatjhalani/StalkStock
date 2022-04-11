@@ -1,0 +1,46 @@
+<button style="float: right;" mat-raised-button (click)="this.subscribeStock()"
+color="{{this.subscriptionList.includes(this.stock) ? 'accent':'warn'}}">
+    {{this.subscriptionList.includes(this.stock) ? 'Subscribed':'Subscribe'}}
+</button>
+<div class="grid-container">
+    
+    <div class="grid-child">
+        <div *ngIf="this.loadDescription">
+        <app-subscription  [selectedstock]="this.stock"></app-subscription>
+        </div>
+    </div>
+
+    <div class="grid-child" *ngIf="showChart">
+        <div class="options vertical" >
+            <label id="legendTitle">Stock Chart: {{this.stock}} </label>
+        </div>
+    
+        <igx-financial-chart height="500px" width="500px"
+        [dataSource]="data"
+        chartType="line"
+        thickness=2
+        
+        >
+        </igx-financial-chart>
+    </div>
+    <div style="padding: 20px;" class="grid-child" *ngIf="this.sentiment">
+        <h3>Market Sentiments - <small class="text-primary">{{sentiment['sentiment']}}</small></h3>
+        <img style="width: 100%;" src="{{sentiment['variation_plot']}}">
+    </div>
+
+    <div class="grid-child" *ngIf="this.pricePrediction">
+        <div class="chart-wrapper">
+            <canvas
+                baseChart
+                [data]="pricePrediction"
+                [type]="'line'"
+                [options]="chartOptions"
+                >
+                </canvas>
+        </div>
+        
+    </div>
+    
+</div>
+
+

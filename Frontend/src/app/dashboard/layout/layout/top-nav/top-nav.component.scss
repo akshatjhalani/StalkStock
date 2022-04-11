@@ -1,0 +1,55 @@
+:host {
+    display: block;
+    position: relative;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 1000;
+  }
+  .nav-brand {
+    text-align: center;
+  }
+  .topnav-icon {
+    text-decoration: none;
+    display: flex;
+    color: white;
+  }
+  
+  .nav-spacer {
+    flex: 1 1 auto;
+  }
+  
+  .visible-md {
+    display: none;
+  }
+  .visible-sm {
+    display: none;
+  }
+  
+  .logo-icon {
+    height: 42px; width: 42px;
+    font-size: 42px;
+    padding: 0.1em;
+  }
+  
+  .logo-text {
+    vertical-align: super;
+      font-style: bold;
+      font-size: x-large;
+      font-family: 'Material Icons';
+  }
+  .logo-subtext {
+    vertical-align: super;
+    font-size: large;
+    font-family: 'Material Icons';
+    margin-left: 1vw;
+  
+  }
+  .logo-art {
+    vertical-align: super;
+    height: 0.9vw;
+  }
+.search-option-img {
+    float: right;
+    transform: translateY(50%);
+}

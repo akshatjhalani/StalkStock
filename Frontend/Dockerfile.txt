@@ -1,0 +1,8 @@
+FROM node:10-alpine
+WORKDIR /Frontend
+COPY . .
+RUN npm install
+RUN npm run build --prod
+
+FROM nginx:alpine
+COPY --from=node /Frontend/dist/stalk-stock /usr/share/nginx/html

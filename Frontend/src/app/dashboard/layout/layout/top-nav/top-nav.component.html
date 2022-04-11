@@ -1,0 +1,47 @@
+<mat-toolbar color="primary" class="fix-nav">
+    <button type="button" mat-icon-button class="visible-md" (click)="toggleSidebar()">
+      <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+    </button>
+    <div class="nav-brand">
+      <mat-icon class="logo-icon">analytics</mat-icon>
+      <a [routerLink]="['/dashboard']" style="color: white;">
+      <label class="logo-text">STALK STOCK</label>
+      </a>
+    </div>
+    <span class="nav-spacer"></span>
+    <form class="hidden-sm" style="margin-top: 10px; width: 60%;">
+      
+      <mat-form-field style="font-size: 1.8rem; width:60%; margin-left: 10vw" appearance="fill">
+        <mat-label>Search Stock . . .</mat-label>
+        <input matInput
+               aria-label="Stock"
+               [matAutocomplete]="auto"
+               [formControl]="stateCtrl">
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)='searchStock($event.option.value)'>
+          <mat-option *ngFor="let stock of filteredStocks | async" 
+          [value]="stock.id">
+            
+            <span>{{stock.name}}</span> |
+            <small>CODE: {{stock.id}}</small>
+            <img class="search-option-img" aria-hidden [src]="stock.img" height="25">
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </form>
+
+    <button routerLink="/dashboard/subscriptions" mat-raised-button color="primary">My Subscriptions</button>
+    <button class="hidden-sm" mat-icon-button [matMenuTriggerFor]="profile">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+    <label>{{loggedInUser}}</label>
+    <mat-menu #profile="matMenu" [overlapTrigger]="false">
+      <button mat-menu-item>
+        <mat-icon>person</mat-icon>
+        <span>Profile</span>
+      </button>
+    </mat-menu>
+    <button mat-icon-button (click)="onLoggedout()">
+      <mat-icon>exit_to_app</mat-icon>
+    </button>
+  </mat-toolbar>
+  

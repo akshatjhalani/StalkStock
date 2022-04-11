@@ -1,0 +1,30 @@
+{
+    "/api/*": {
+        "target": "https://2gau7bq02k.execute-api.us-east-1.amazonaws.com/dev/sas/",
+        "secure": true,
+        "changeOrigin": true,
+        "logLevel": "info",
+        "pathRewrite": {
+            "^/api": ""
+        }
+    },
+    "/price/*": {
+        "target": "https://310nr5j5qe.execute-api.us-east-1.amazonaws.com/",
+        "secure": true,
+        "changeOrigin": true,
+        "logLevel": "info",
+        "pathRewrite": {
+            "^/price": ""
+        }
+    },
+    "/subscription/*": {
+        "target": "https://ygeown8ckk.execute-api.us-east-1.amazonaws.com/stocksent1/",
+        "secure": true,
+        "changeOrigin": true,
+        "logLevel": "info",
+        "pathRewrite": {
+            "^/subscription": ""
+        }
+    }
+
+}

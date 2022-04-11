@@ -1,0 +1,102 @@
+<div class="container">
+    <h3 *ngIf="isSubscriptionPage"><b>Your Subscriptions</b></h3>
+    <div class="row page-title" style="margin-top: -10px;">
+        <div [ngClass]="{'col-md-6': isSubscriptionPage}" style="padding:10px;" *ngFor="let stock of subscriptionList; let i=index;">
+            <div class="card">
+                <mat-slide-toggle *ngIf="isSubscriptionPage"style="float: right;">Send Alerts</mat-slide-toggle>
+                <img style="height: 40px; width: 40px; float: left;" src="{{stock.logo}}">
+                <h3><a routerLink="{{'/dashboard/stock/'+stock.stock}}">{{stock.stock}}</a> - <small>{{stock.sector}}</small></h3>
+                <h3><small>Our Recommendation - {{stock.recommendation}}</small></h3>
+                
+                <div class="h-tab">
+                    <mat-tab-group [backgroundColor]="'primary'" [color]="'warn'">
+                        <mat-tab label="Overview"> 
+                            <h5>{{stock.description}}</h5>
+                            <br/><br/>
+                            <div class="col-md-6">
+                                <h6 class="text-primary">TODAY's HIGH</h6><h5>{{stock.prices['high']}}</h5>
+                                <hr>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-primary">TODAY's LOW</h6><h5>{{stock.prices['low']}}</h5>
+                                <hr>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h6 class="text-primary">VOLUME</h6><h5>{{stock.prices['volume']}}</h5>
+                                <hr>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h6 class="text-primary">OPEN</h6><h5>{{stock.prices['open']}}</h5>
+                                <hr>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h6 class="text-primary">CLOSE</h6><h5>{{stock.prices['cur_price']}}</h5>
+                                <hr>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h6 class="text-primary">52-WEEK HIGH</h6><h5>{{stock.prices['fiftytwoweekhigh']}}</h5>
+                                <hr>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h6 class="text-primary">52-WEEK LOW</h6><h5>{{stock.prices['fiftytwoweeklow']}}</h5>
+                                <hr>
+                            </div>
+                            
+                         </mat-tab>
+                        <mat-tab label="News"> 
+                             <mat-nav-list>
+                                <mat-list-item *ngFor="let n of stock.news; let i=index;">
+                                    
+                                   <a matLine href="{{n.url}}">{{i+1}}-{{ n.title }}</a>
+                                   <button mat-icon-button>
+                                      <mat-icon>info</mat-icon>
+                                   </button>
+                                </mat-list-item>
+                              </mat-nav-list>
+                         </mat-tab>
+                        <mat-tab label="Financials"> 
+                            <div class="table-responsive">
+                                <table class="table">
+                                  <thead class="text-primary">
+                                    <tr>
+                                      <th *ngFor="let c of stock.financials.c">{{c}}</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr *ngFor="let r of stock.financials.r">
+                                      <td ng-class="{ red: int(v) < 0 }" *ngFor="let v of r">{{v}}</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                             </mat-tab>
+                      </mat-tab-group>
+                    <!-- <div class="tab">
+                        <button mat-raised-button class="btn btn-warning btn-round tab-link default-active" (click)="tabClick($event, 'profile'+i)">PROFILE</button>
+                        <button mat-raised-button class="btn btn-warning btn-round tab-link" (click)="tabClick($event, 'settings'+i)">SETTINGS</button>
+                        <button mat-raised-button class="btn btn-warning btn-round tab-link" (click)="tabClick($event, 'options'+i)">OPTIONS</button>
+                      </div>
+                      <div id="{{'profile'+i}}" class="tab-content">
+                        Collaboratively administrate empowered markets via plug-and-play networks. Dynamically procrastinate B2C users after installed base benefits.<br/><br/>
+                        Dramatically visualize customer directed convergence without revolutionary ROI. Collaboratively administrate empowered markets via plug-and-play networks. Dynamically procrastinate B2C users after installed base benefits.<br/><br/>
+                        This is very nice.
+                      </div>
+                      <div id="{{'settings'+i}}" class="tab-content">
+                        Efficiently unleash cross-media information without cross-media value. Quickly maximize timely deliverables for real-time schemas.<br/><br/>
+                        Dramatically maintain clicks-and-mortar solutions without functional solutions.
+                      </div>
+                      <div id="{{'options'+i}}" class="tab-content">
+                        Completely synergize resource taxing relationships via premier niche markets. Professionally cultivate one-to-one customer service with robust ideas.<br/><br/>
+                        Dynamically innovate resource-leveling customer service for state of the art customer service.
+                      </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  

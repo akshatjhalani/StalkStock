@@ -1,0 +1,216 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: "Stock API"
+servers:
+  - url: https://310nr5j5qe.execute-api.us-east-1.amazonaws.com
+tags:
+- name: "stock"
+  description: "query stock data"
+paths:
+  /price/{symbol}:
+    get:
+      tags:
+      - "stock"
+      summary: "Get stock prices by symbol"
+      description: "Returns the prices data of a stock"
+      parameters:
+      - in: path
+        name: "symbol"
+        description: "symbol of the stock to query"
+        required: true
+        schema:
+          type: "string"
+      - in: query
+        name: "start"
+        description: "start date(time) of a query. If not set, the start day will be 365 days before if `interval` is `D`; will be 30 days before if `interval` is `h`."
+        required: false
+        schema:
+          type: "string"
+      - in: query
+        name: "end"
+        description: "end date(time) of a query (exclusive). If not set, the query will return all the data greater than `start`."
+        required: false
+        schema:
+          type: "string"
+      - in: query
+        name: "interval"
+        description: "interval of the data. `h` for hour, `D` for day. Default is `D`."
+        required: false
+        schema:
+          type: string
+          enum: ["h", "D"]
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    description: "when `interval` is `h`"
+                    properties:
+                      prices:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            symbol:
+                              type: string
+                              example: "GS"
+                            date:
+                              type: string
+                              example: "2021-12-23T09:30:00-05:00"
+                            open:
+                              type: number
+                              example: 383.79
+                            close:
+                              type: number
+                              example: 384.71
+                            high:
+                              type: number
+                              example: 387.61
+                            low:
+                              type: number
+                              example: 383.57
+                            volumn:
+                              type: integer
+                              example: 574089
+                  - type: object
+                    description: "when `interval` is `D`"
+                    properties:
+                      prices:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            symbol:
+                              type: string
+                              example: "AAPL"
+                            date:
+                              type: string
+                              example: "2021-03-29"
+                            open:
+                              type: number
+                              example: 120.9312
+                            close:
+                              type: number
+                              example: 120.6728
+                            high:
+                              type: number
+                              example: 121.8557
+                            low:
+                              type: number
+                              example: 120.0167
+                            volumn:
+                              type: integer
+                              example: 80819200
+              examples:
+                day:
+                  value:
+                    prices: [
+                      {
+                        symbol: "GS",
+                        date: "2021-12-23T09:30:00-05:00",
+                        open: 383.79,
+                        close: 384.71,
+                        high: 387.61,
+                        low: 383.57,
+                        volumn: 574089
+                      }
+                    ]
+                hour:
+                  value:
+                    prices: [
+                      {
+                        "symbol": "AAPL",
+                        "date": "2021-03-29",
+                        "low": 120.0167,
+                        "open": 120.9312,
+                        "volume": 80819200,
+                        "close": 120.6728,
+                        "high": 121.8557
+                      }
+                    ]
+        "400":
+          description: "Bad request"
+  /predict/{symbol}:
+    get:
+      tags:
+      - "stock"
+      summary: "Get predicted stock prices by symbol"
+      description: "Returns the predicted prices data of a stock. `prices` array contains future stock prices. `macd_hists` contains predicted macd histogram. `0.5` is the average predicting result; The range between `0.1` to `0.9` can be seem as 80% confident results."
+      parameters:
+      - in: path
+        name: "symbol"
+        description: "symbol of the stock to query"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  prices:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          example: "2022-03-29"
+                        "0.1":
+                          type: number
+                          example: 135.74053153618013
+                        "0.5":
+                          type: number
+                          example: 160.5360692294198
+                        "0.9":
+                          type: number
+                          example: 183.3641071741294
+              examples:
+                example1:
+                  value:
+                    prices: [
+                      {
+                        "date": "2022-03-29",
+                        "0.1": 135.74053153618013,
+                        "0.5": 160.5360692294198,
+                        "0.9": 183.3641071741294
+                      },
+                    ]
+                    macd_hists: [
+                      {
+                        "date": "2022-03-29",
+                        "0.1": -0.3837537766,
+                        "0.5": 1.1986395121,
+                        "0.9": 2.6554715633
+                      },
+                    ]
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Symbol not found"
+        "500":
+          description: "Internal error"
+  /stocks:
+    get:
+      tags:
+      - "stock"
+      summary: "Get all supported stock symbols"
+      description: "Returns a lists of stock symbols"
+      responses:
+          "200":
+            description: "successful operation. Note that the response is "
+            content:
+              application/json:
+                examples:
+                  example1:
+                    value:
+                      symbols: [
+                          "INTC", "JPM", "IBM", "JNJ", "UNH", "GS", "MRK", "MCD", "CSCO", "NKE", "DOW", "WBA", "PG", "CVX", "AXP", "DIS", "HON", "BA", "CRM", "AMGN", "V", "TRV", "WMT", "AAPL", "CAT", "MMM", "MSFT", "VZ", "KO", "HD"
+                      ]

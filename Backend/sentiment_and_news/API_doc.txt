@@ -1,0 +1,51 @@
+1. Get stock sentiment, news, and sentiment related plots
+GET  https://ygeown8ckk.execute-api.us-east-1.amazonaws.com/stocksent1/stock-sentiment-and-news
+
+2. USER INFO API
+GET https://ygeown8ckk.execute-api.us-east-1.amazonaws.com/stocksent1/get-user-stock-info 
+-> returns user info like username, email and stocks subscribed
+POST https://ygeown8ckk.execute-api.us-east-1.amazonaws.com/stocksent1/get-user-stock-info 
+-> add a new user
+{
+    "TableName": "user_info_table",
+    "Item": {
+        "username": {
+            "S": "user1"
+        },
+        "email": {
+            "S": "user1@email.com"
+        },
+        "stock_symbol": {
+            "L": [
+                {
+                    "S": "APPL"
+                }
+            ]
+        }
+    }
+}
+	
+PUT https://ygeown8ckk.execute-api.us-east-1.amazonaws.com/stocksent1/get-user-stock-info 
+-> To update/ add a stock to existing list of stock for a user
+	
+{
+    "TableName": "user_info_table",
+    "Key": {
+        "username": {
+            "S": "existing_username"
+        }
+    },
+    "UpdateExpression": "set stock_symbol = list_append(stock_symbol,:val1)",
+    "ExpressionAttributeValues": {
+        ":val1": {
+            "L": [
+                {
+                    "S": "APPL"
+                }
+            ]
+        }
+    },
+    "ReturnValues": "ALL_NEW"
+}
+
+		

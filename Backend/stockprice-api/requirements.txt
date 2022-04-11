@@ -1,0 +1,4 @@
+aws_psycopg2==1.2.1
+boto3==1.21.22
+botocore==1.24.22
+pandas==1.4.1

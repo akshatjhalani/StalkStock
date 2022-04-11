@@ -1,0 +1,108 @@
+org: rasphino
+app: lambda-demo
+console: false
+configValidationMode: error
+service: stockprice-api
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.8
+  environment:
+    DAILY_DYNAMODB_TABLE: fetcher-${sls:stage}-stock-prices
+    # TODO: include `hourly` in table name
+    HOURLY_DYNAMODB_TABLE: fetcher-${sls:stage}
+    S3_BUCKET: sagemaker-stock-prices
+    DB_HOST: ${self:custom.db_secret.host}
+    DB_NAME: postgres
+    DB_USER: ${self:custom.db_secret.username}
+    DB_PASSWORD: ${self:custom.db_secret.password}
+    EVENT_BUS_NAME: stalk-stock
+  httpApi:
+    cors: true
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+          Resource:
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DAILY_DYNAMODB_TABLE}"
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.HOURLY_DYNAMODB_TABLE}"
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+            - s3:PutObject
+          Resource:
+            - "arn:aws:s3:::${self:provider.environment.S3_BUCKET}"
+            - "arn:aws:s3:::${self:provider.environment.S3_BUCKET}/*"
+        - Effect: Allow
+          Action:
+            - events:PutEvents
+          Resource:
+            - "*"
+
+functions:
+  hello:
+    handler: src/handler.hello
+    events:
+      - httpApi:
+          method: GET
+          path: /hello
+  exporter:
+    handler: src/exporter.run
+    timeout: 30
+    events:
+      - schedule: cron(0 1 * * ? *)
+  api_stock_price:
+    handler: src/api.price
+    events:
+      - httpApi:
+          method: GET
+          path: /price/{symbol}
+      - schedule: rate(5 minutes)
+  api_predict_price:
+    handler: src/api.predict
+    events:
+      - httpApi:
+          method: GET
+          path: /predict/{symbol}
+      - schedule: rate(5 minutes)
+  api_list_stocks:
+    handler: src/api.list_stocks
+    events:
+      - httpApi:
+          method: GET
+          path: /stocks
+      - schedule: rate(5 minutes)
+
+resources:
+  Resources:
+    StalkStockEventBus:
+      Type: 'AWS::Events::EventBus'
+      Properties:
+        Name: ${self:provider.environment.EVENT_BUS_NAME}
+    ExportSuccessEventRule:
+      Type: 'AWS::Events::Rule'
+      Properties:
+        Name: 'ExportSuccessEvent'
+        EventBusName: ${self:provider.environment.EVENT_BUS_NAME}
+        EventPattern: {
+          "source": [ "stalkstock.stockprice-api.exporter" ],
+          "detail-type": [ "Export Succeed" ],
+        }
+
+plugins:
+  - serverless-python-requirements
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+    zip: true
+  db_secret: ${ssm:/aws/reference/secretsmanager/db}
+
+package:
+  patterns:
+    - '!venv'

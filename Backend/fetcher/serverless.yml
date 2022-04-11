@@ -1,0 +1,84 @@
+org: rasphino
+app: lambda-demo
+console: false
+service: fetcher
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.8
+  environment:
+    DB_HOST: ${self:custom.db_secret.host}
+    DB_NAME: postgres
+    DB_USER: ${self:custom.db_secret.username}
+    DB_PASSWORD: ${self:custom.db_secret.password}
+    DYNAMODB_TABLE: ${self:service}-${sls:stage}-stock-prices
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:BatchWriteItem
+          Resource: "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+
+functions:
+  hello:
+    handler: src/handler.hello
+  rateLogger:
+    handler: src/handler.rate
+  fetcher:
+    handler: src/fetcher.run
+    timeout: 10
+    events:
+      - schedule: rate(5 minutes)
+  fetcher_init:
+    handler: src/fetcher.init_db
+  fetcher_add_stock:
+    handler: src/fetcher.add_stock
+  fetcher_add_stocks:
+    handler: src/fetcher.add_stocks
+  fetcher_status:
+    handler: src/fetcher.status
+
+resources:
+  Resources:
+    StockPricesDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: symbol
+            AttributeType: S
+          -
+            AttributeName: date
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: symbol
+            KeyType: HASH
+          -
+            AttributeName: date
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+    zip: true
+  db_secret: ${ssm:/aws/reference/secretsmanager/db}
+
+package:
+  patterns:
+    - '!venv'
